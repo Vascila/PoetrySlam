@@ -33,8 +33,6 @@ public class HtmlBuilder {
 	    OutputStream out = new FileOutputStream(new File(htmlDir,"malletgui.css"));
 
 	    java.util.Scanner s = new java.util.Scanner(cssResource).useDelimiter("\\A");
-	    System.out.println("STUFF IS HAPPENING");
-		System.out.println(s.hasNext() ? s.next() : "");
 	    
 	    // Transfer bytes from in to out
 	    byte[] buf = new byte[1024];

@@ -15,9 +15,9 @@ public class TopicModelling {
 	/** the delimiter for csv files */
 	public static final String CSV_DEL = ";"; 
 	public static final String newline = "\n";
-	public static final String DEFAULT_INPUT_DIR = "C:/Users/Lukas/git/PoetrySlam/Poems"; 
+	public static final String DEFAULT_INPUT_DIR = "C:/Users/Lukas/git/PoetrySlam/OtherText/testLine.txt"; 
 	public static final String DEFAULT_OUTPUT_DIR = "C:/Users/Lukas/git/PoetrySlam/output"; 
-	public static final String DEFAULT_NUM_TOPICS = "10";
+	public static final String DEFAULT_NUM_TOPICS = "5";
 	
 	public static final String[] DEFAULT_STOPWORDS = {"--remove-stopwords", "true"};
 	public static final String[] DEFAULT_PRESERVE_CASE = {"--preserve-case", "false"};
@@ -74,9 +74,7 @@ public class TopicModelling {
             Class[] argTypes =  {fullImportArgs.getClass(),}; // array is Object!
 			Method m = c.getMethod("main", argTypes);
             Object[] passedArgs =  {fullImportArgs};
-            System.out.println(Arrays.toString(fullImportArgs));
-            
-            Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
+            //System.out.println(Arrays.toString(fullImportArgs));
             
     		log.info("Importing...");
             m.invoke(null, passedArgs);
@@ -96,8 +94,8 @@ public class TopicModelling {
             argTypes = new Class[]{fullTrainArgs.getClass(),}; // array is Object!
 			m = c.getMethod("main", argTypes);
             passedArgs =  new  Object[]{fullTrainArgs};
-            System.out.println(Arrays.toString(fullTrainArgs));
-            System.out.println("STOP!");
+//            System.out.println(Arrays.toString(fullTrainArgs));
+//            System.out.println("STOP!");
     		
     		
             m.invoke(null, passedArgs);
@@ -109,10 +107,10 @@ public class TopicModelling {
             //outputHtmlFiles(outputDir);
             
             
-            System.out.println("Mallet Output files written in " + outputDir + " ---> " + stateFile + " , " +
-            		topicKeysFile + newline);
-            System.out.println("Csv Output files written in " + outputDir + File.separator+ "output_csv");
-            System.out.println("Html Output files written in " + outputDir + File.separator+ "output_html");
+//            System.out.println("Mallet Output files written in " + outputDir + " ---> " + stateFile + " , " +
+//            		topicKeysFile + newline);
+//            System.out.println("Csv Output files written in " + outputDir + File.separator+ "output_csv");
+//            System.out.println("Html Output files written in " + outputDir + File.separator+ "output_html");
 	     }
 	     catch (Throwable e1) {
 	            e1.printStackTrace();
@@ -157,7 +155,7 @@ public class TopicModelling {
  		{
  			if(!(new File(outputDir,f).canWrite()))
  			{
- 	 			System.out.println(f);
+ 	 			//System.out.println(f);
  	 		}
  			new File(outputDir,f).delete();
  		}

@@ -137,11 +137,14 @@ public class CsvBuilder {
 	
 	public String extractFileSubstring(String[] strArr,int startIndex) throws URISyntaxException {
 		String filename=strArr[startIndex];
-		for(int i = startIndex+1; i <strArr.length; i++){			
-			if(new File(new URI(filename)).exists()){
-				filename = filename + CSV_DEL + i;				//FIXME change to object if possible
-				break;
-			}
+		for(int i = startIndex+1; i <strArr.length; i++){	
+			
+			// TODO This IF fails for single file documents!!!
+//			if(new File(new URI(filename)).exists()){
+//				filename = filename + CSV_DEL + i;				//FIXME change to object if possible
+//				break;
+//			}
+			
 //			filename = filename + " " + strArr[i];
 			filename = filename + CSV_DEL + strArr[i]; 
 		}
