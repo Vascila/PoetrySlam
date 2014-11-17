@@ -1,16 +1,16 @@
 package server.mallet;
 
+import static server.mallet.TopicModelling.CSV_DEL;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import static server.mallet.TopicModelling.CSV_DEL;
 
 public class CsvBuilder {
 
@@ -244,15 +244,6 @@ public class CsvBuilder {
 	
 	public int[][] getNtd(){
 		return Ntd;
-	}
-	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		CsvBuilder o = new CsvBuilder();
-		//o.setNumTopics(10);	
-		//o.buildCsv2("/Users/zom/Documents/workspace/MalletGui/output_doc_topics.txt", 4, "output.csv");
-		//o.buildCsv3("/Users/zom/Documents/workspace/MalletGui/output_state",4,"output2.csv");
-		//o.buildCsv1("/Users/zom/Documents/workspace/MalletGui/output_topic_keys", "output3");
 	}
 
 }

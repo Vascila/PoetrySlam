@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
@@ -25,8 +24,7 @@ import database.domain.Poem;
 
 public class PipeLine {
 	
-	private static final String collectionDir = "C:\\Users\\Lukas\\git\\PoetrySlam\\OtherText\\testLine.txt";
-	private static Writer output;
+	private static final String collectionDir = "OtherText/testLine.txt";
 	
 	public static void addToPoemCollection(Poem poem) {
 		
@@ -47,8 +45,6 @@ public class PipeLine {
         
         instances.addThruPipe(new CsvIterator (test, Pattern.compile("^(\\S*)[\\s,]*(\\S*)[\\s,]*(.*)$"),
                                                3, 2, 1)); // data, label, name fields
-
-        //System.out.println(instances.getDataAlphabet().toString());
         
         try(PrintWriter output = new PrintWriter(new FileWriter(collectionDir,true))) 
         {
@@ -59,15 +55,6 @@ public class PipeLine {
             output.printf("%s\r\n", poem.getPoemID() + " en " + endString);
         } 
         catch (Exception e) {}
-        
-//        try {
-//			output = new BufferedWriter(new FileWriter(collectionDir, true));
-//			output.append(id + " " + instances.getDataAlphabet().toString());
-//			System.out.println("Appended");
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
         
 //        Writer writer = new BufferedWriter(new OutputStreamWriter(
 //                new FileOutputStream(OUTPUT_DIR), "utf-8"));

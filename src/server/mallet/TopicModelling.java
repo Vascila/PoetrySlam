@@ -1,11 +1,9 @@
 package server.mallet;
 
-import java.awt.Cursor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.logging.Logger;
 
@@ -15,8 +13,8 @@ public class TopicModelling {
 	/** the delimiter for csv files */
 	public static final String CSV_DEL = ";"; 
 	public static final String newline = "\n";
-	public static final String DEFAULT_INPUT_DIR = "C:/Users/Lukas/git/PoetrySlam/OtherText/testLine.txt"; 
-	public static final String DEFAULT_OUTPUT_DIR = "C:/Users/Lukas/git/PoetrySlam/output"; 
+	public static final String DEFAULT_INPUT_DIR = "OtherText/testLine.txt"; 
+	public static final String DEFAULT_OUTPUT_DIR = "output"; 
 	public static final String DEFAULT_NUM_TOPICS = "5";
 	
 	public static final String[] DEFAULT_STOPWORDS = {"--remove-stopwords", "true"};
@@ -36,10 +34,10 @@ public class TopicModelling {
 	public static void runMallet() {
 		long start = System.currentTimeMillis(); 
 				
+		String inputDir = DEFAULT_INPUT_DIR;
 		String outputDir = DEFAULT_OUTPUT_DIR;
-		String collectionPath = new File(outputDir,"topic-input.mallet").getPath();  //FIXME
-        String inputDir = DEFAULT_INPUT_DIR;
-        File file = new File(inputDir);
+		
+		String collectionPath = new File(outputDir,"topic-input.mallet").getPath();
         
         log.info("Importing and Training...this may take a few minutes depending on collection size.");
         log.info("Importing from: " + inputDir + "." + newline);
@@ -48,12 +46,7 @@ public class TopicModelling {
         try {
         	
         	@SuppressWarnings("rawtypes")
-			Class c;
-        	
-        	if(file.isDirectory())	
-        		c = Class.forName("cc.mallet.classify.tui.Text2Vectors");
-        	else
-        		c = Class.forName("cc.mallet.classify.tui.Csv2Vectors");
+			Class c = Class.forName("cc.mallet.classify.tui.Csv2Vectors");
         	       	
         	ArrayList<String> imp = new ArrayList<String>();
            	ArrayList<String> trn = new ArrayList<String>();
@@ -118,7 +111,7 @@ public class TopicModelling {
       
       long elapsedTimeMillis = System.currentTimeMillis()-start;
 
-   // Get elapsed time in seconds
+      // Get elapsed time in seconds
       float elapsedTimeSec = elapsedTimeMillis/1000F;
       System.out.println("Time :" + elapsedTimeSec);
 	 }
