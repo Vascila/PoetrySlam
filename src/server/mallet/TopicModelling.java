@@ -69,7 +69,7 @@ public class TopicModelling {
             Object[] passedArgs =  {fullImportArgs};
             //System.out.println(Arrays.toString(fullImportArgs));
             
-    		log.info("Importing...");
+//    		log.info("Importing...");
             m.invoke(null, passedArgs);
             
             

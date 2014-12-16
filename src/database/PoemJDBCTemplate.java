@@ -36,11 +36,19 @@ public class PoemJDBCTemplate implements PoemDao {
 				"SELECT * " +
 				"FROM Poems ";
 		List<Poem> poems =  jdbcTemplateObject.query(sql, new PoemMapper());
-		System.out.println(poems.size());
 		return poems;
 	}
 
-
+	@Override
+	public Poem getPoemByID(int id) {
+		String sql =
+				"SELECT * " +
+				"FROM Poems " +
+				"WHERE Poems.poemid = ? ";
+		Object[] args = {id};
+		Poem poem = jdbcTemplateObject.query(sql, args, new PoemMapper()).get(0);
+		return poem;
+	}
 
 	@Override
 	public int insertPoem(Poem poem) {
