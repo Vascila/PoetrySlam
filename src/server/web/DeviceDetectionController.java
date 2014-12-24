@@ -1,8 +1,15 @@
 package server.web;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import maps.DocsInTopicMap;
+import maps.TopicDistWrapper;
+import maps.TopicsInDocsMap;
+
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -13,12 +20,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import server.mallet.PipeLine;
 import database.PoemJDBCTemplate;
 import database.domain.Poem;
 
 @Controller
-public class DeviceDetectionController {
+public class DeviceDetectionController implements InitializingBean {
+	
+	private Map<Integer, List<TopicDistWrapper>> topicsInDocsMap;
+	private Map<Integer, List<Integer>> docsInTopicsMap;
+	
+	
+	@Override
+	public void afterPropertiesSet() throws Exception {
+    	topicsInDocsMap = TopicsInDocsMap.generateMap();
+    	docsInTopicsMap = DocsInTopicMap.generateMap();
+	}
     
     @RequestMapping(value = "/angularjs-http-service-ajax-post-json-data-code-example", method = RequestMethod.GET)
     public ModelAndView httpServicePostJSONDataExample( ModelMap model ) {
@@ -47,7 +63,7 @@ public class DeviceDetectionController {
     	
     	Poem poem = new Poem();
     	poem = poemJDBCTemplate.getPoemByID(id);
-    	System.out.println("Sending Title: " + poem.getTitle() + " And Author: " + poem.getAuthor());
+    	System.out.println("Sending Title: " + poem.getTitle() + " And Author: " + poem.getAuthor() + "\nPoem Text: \n" + poem.getText());
     	return poem;
     }
 
@@ -62,9 +78,44 @@ public class DeviceDetectionController {
     	//PipeLine.addToPoemCollection(poem);
     	
     	//TopicModelling.runMallet();
-    	System.out.println("Author: " + poem.getAuthor() + "\nTitle: " + poem.getTitle());
+    	System.out.println("Author: " + poem.getAuthor() + "\nTitle: " + poem.getTitle() + "\nPoem Text: \n" + poem.getText());
     	return "Success!";
     }
     
 
+    @RequestMapping(value = "/findSimilar", method = RequestMethod.POST)
+    @ResponseBody
+    public Poem findSimilar( @RequestBody List<Integer> history) throws IOException   {	
+    	ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+    	PoemJDBCTemplate poemJDBCTemplate = (PoemJDBCTemplate) context.getBean("poemJDBCTemplate");
+    	
+    	int sID = getSimilarID(history);
+    	
+    	System.out.println(sID);
+    	Poem poem = poemJDBCTemplate.getPoemByID(sID);
+    	return poem;
+    }
+    
+    
+    public int getSimilarID(List<Integer> history) {
+    	int current = history.get(history.size() - 1);
+    	int topic = findTopTopic(current);
+    	int mS = getMostSimilar(topic, history);
+    	return mS;
+    }
+    
+    public int findTopTopic(int poemID) {
+    	return topicsInDocsMap.get(poemID).get(0).getTopicId();
+    }
+    
+    public int getMostSimilar(int topicID, List<Integer> history) {
+    	List<Integer> topList = docsInTopicsMap.get(topicID);
+    	for(int id: topList) {
+    		if (!history.contains(id))
+    			return id;
+    	}
+    	return -1;
+    }
+
+	
 }

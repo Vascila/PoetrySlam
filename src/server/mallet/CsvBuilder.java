@@ -154,23 +154,12 @@ public class CsvBuilder {
 	public String dtLine2Csv(String line)
 	{
 		try {
-			int start;
 			String[] str = line.split("\\t"); // tab as split 
 			if(str.length>=2) {	
-				String csvLine = str[0];
-				if(str[1].equals("null-source")){
-					csvLine  = csvLine + CSV_DEL+str[1];
-					start = 2;
-					docNames.add("null-source");
-				} else {			
-					String augfile = extractFileSubstring(str,1);
-					String[] filewnum = augfile.split(CSV_DEL); // has been ','
-					docNames.add(filewnum[0]);
-					csvLine  = csvLine + CSV_DEL+filewnum[0];
-					start = Integer.parseInt(filewnum[1]);
-				}	
-				for(int i=start;i<str.length-1;i=i+2)  {
-					csvLine = csvLine + CSV_DEL + str[i] + CSV_DEL + str[i+1];
+				String csvLine = str[0] + CSV_DEL + str[1];
+				docNames.add(str[1]);
+				for(int i = 2; i < str.length ; i += 2)  {
+					csvLine += CSV_DEL + str[i] + CSV_DEL + str[i+1];
 				}				
 				return csvLine;
 			} else {
