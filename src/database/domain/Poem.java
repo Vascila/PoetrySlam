@@ -1,5 +1,6 @@
 package database.domain;
 
+
 public class Poem {
 
 	private Integer poemID;
@@ -31,5 +32,4 @@ public class Poem {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
 }

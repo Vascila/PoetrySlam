@@ -15,13 +15,13 @@ public class TopicModelling {
 	public static final String newline = "\n";
 	public static final String DEFAULT_INPUT_DIR = "OtherText/testLine.txt"; 
 	public static final String DEFAULT_OUTPUT_DIR = "output"; 
-	public static final String DEFAULT_NUM_TOPICS = "5";
+	public static final String DEFAULT_NUM_TOPICS = "8";
 	
 	public static final String[] DEFAULT_STOPWORDS = {"--remove-stopwords", "true"};
 	public static final String[] DEFAULT_PRESERVE_CASE = {"--preserve-case", "false"};
 	public static final String[] DEFAULT_NUM_ITER = {"--num-iterations", "200"};
 	public static final String[] DEFAULT_NUM_TOP_WORDS = {"--num-top-words", "10"};
-	public static final String[] DEFAULT_DOC_TOPICS_THRESH = {"--doc-topics-threshold", "0.05"};
+	public static final String[] DEFAULT_DOC_TOPICS_THRESH = {"--doc-topics-threshold", "0.00"};
 	public static final String[] DEFAULT_STOPLIST_FILE = {"--stoplist-file", "import"};
 	
 	public static final String[] EXTRA_FILES = {"topic-input.mallet","output_topic_keys","output_state.gz",

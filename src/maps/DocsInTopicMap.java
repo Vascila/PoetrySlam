@@ -55,4 +55,12 @@ public class DocsInTopicMap {
         return map;
     }
 	
+	public static Map<Integer, List<Integer>> generateMap(Map<Integer, List<TopicDistWrapper>> topicsInDocsMap) throws FileNotFoundException {
+		Map<Integer, List<Integer>> map = new HashMap<Integer, List<Integer>>();
+		map = generateMap();
+		
+		
+		
+		return map;
+	}
 }

@@ -12,7 +12,10 @@ public interface PoemDao {
 	   
 	public List<Poem> getAllPoems();
 	
+	public List<Poem> getNewestPoems();
+	 
 	public Poem getPoemByID(int id);
+	public List<Poem> getPoemsByID(List<Integer> nId);
 	
 	public int insertPoem(Poem poem);
 }
