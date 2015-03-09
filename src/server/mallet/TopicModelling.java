@@ -13,9 +13,9 @@ public class TopicModelling {
 	/** the delimiter for csv files */
 	public static final String CSV_DEL = ";"; 
 	public static final String newline = "\n";
-	public static final String DEFAULT_INPUT_DIR = "OtherText/testLine.txt"; 
+	public static final String DEFAULT_INPUT_DIR = "OtherText/testLineFixed.txt"; 
 	public static final String DEFAULT_OUTPUT_DIR = "output"; 
-	public static final String DEFAULT_NUM_TOPICS = "8";
+	public static final String DEFAULT_NUM_TOPICS = "15";
 	
 	public static final String[] DEFAULT_STOPWORDS = {"--remove-stopwords", "true"};
 	public static final String[] DEFAULT_PRESERVE_CASE = {"--preserve-case", "false"};

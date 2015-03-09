@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import wrappers.TopicDistWrapper;
+
 public class TopicsInDocsMap {
 	
 	private static final String collectionDir = "output/output_csv/TopicsInDocs.csv";

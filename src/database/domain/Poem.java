@@ -7,6 +7,7 @@ public class Poem {
 	private String author;
 	private String title;
 	private String text;
+	private Double distribution;
 	
 	public Integer getPoemID() {
 		return poemID;
@@ -31,5 +32,11 @@ public class Poem {
 	}
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	public Double getDistribution() {
+		return distribution;
+	}
+	public void setDistribution(Double distribution) {
+		this.distribution = distribution;
 	}
 }

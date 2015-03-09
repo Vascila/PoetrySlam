@@ -18,8 +18,10 @@ import org.springframework.web.servlet.ModelAndView;
 import server.mallet.PipeLine;
 import server.mallet.TopicModelling;
 import server.util.MapFunctions;
+import wrappers.DocDistWrapper;
 import database.PoemJDBCTemplate;
 import database.domain.Poem;
+import database.domain.PoemLikeWrapper;
 
 @Controller
 public class DeviceDetectionController implements InitializingBean {
@@ -44,6 +46,7 @@ public class DeviceDetectionController implements InitializingBean {
     @RequestMapping(value = "/getAllPoems", method = RequestMethod.POST)
     @ResponseBody
     public List<Poem> getAllPoems() {
+    	System.out.println("Retrieving all poems");
     	List<Poem> poems = new ArrayList<Poem>();
     	poems.addAll(poemJDBCTemplate.getAllPoems());
     	return poems;
@@ -54,7 +57,6 @@ public class DeviceDetectionController implements InitializingBean {
     public List<Poem> getNewestPoems() {
     	List<Poem> poems = new ArrayList<Poem>();
     	poems.addAll(poemJDBCTemplate.getNewestPoems());
-    	System.out.println("Getting Newest Poems!");
     	return poems;
     }
     
@@ -64,7 +66,6 @@ public class DeviceDetectionController implements InitializingBean {
     public Poem getPoemByID(@RequestBody int id) {
     	Poem poem = new Poem();
     	poem = poemJDBCTemplate.getPoemByID(id);
-    	System.out.println("Sending Title: " + poem.getTitle() + " And Author: " + poem.getAuthor() + "\nPoem Text: \n" + poem.getText());
     	return poem;
     }
 
@@ -77,7 +78,6 @@ public class DeviceDetectionController implements InitializingBean {
     	PipeLine.addToPoemCollection(poem);
     	
     	TopicModelling.runMallet();
-    	System.out.println("Author: " + poem.getAuthor() + "\nTitle: " + poem.getTitle() + "\nPoem Text: \n" + poem.getText());
     	return "Success!";
     }
     
@@ -85,8 +85,9 @@ public class DeviceDetectionController implements InitializingBean {
     @RequestMapping(value = "/findSimilar", method = RequestMethod.POST)
     @ResponseBody
     public Poem findSimilar( @RequestBody List<Integer> history) throws IOException   {	
-    	int sID = mapFunctions.getSimilarID(history);
-    	Poem poem = poemJDBCTemplate.getPoemByID(sID);
+    	DocDistWrapper sID = mapFunctions.getSimilarID(history);
+    	Poem poem = poemJDBCTemplate.getPoemByID(sID.getDocName());
+    	poem.setDistribution(sID.getDistribution());
     	return poem;
     }
     
@@ -99,15 +100,33 @@ public class DeviceDetectionController implements InitializingBean {
     	return poems;
     }    
     
-    @RequestMapping(value = "/getRandDist", method = RequestMethod.POST)
+    @RequestMapping(value = "/getRandDistTopics", method = RequestMethod.POST)
     @ResponseBody
-    public List<Poem> getRandDist( @RequestBody List<Integer> history) throws IOException   {
+    public List<Poem> getRandDistTopics( @RequestBody List<Integer> history) throws IOException   {
     	
-    	System.out.println("Getting Random Distribution");
-    	List<Integer> nID = mapFunctions.getRandomDist(history);
+    	List<Integer> nID = mapFunctions.getRandomDistTopics(history);
     	List<Poem> poems = poemJDBCTemplate.getPoemsByID(nID);
     	
     	return poems;
     }
+    
+    @RequestMapping(value = "/getRandDistPoems", method = RequestMethod.POST)
+    @ResponseBody
+    public List<Poem> getRandDistPoems( @RequestBody List<Integer> history) throws IOException   {
+    	
+    	List<DocDistWrapper> nID = mapFunctions.getRandomDistPoems(history);
+    	List<Poem> poems = poemJDBCTemplate.getPoemsFromWrappers(nID);
+    	
+    	return poems;
+    }
+    
+    @RequestMapping(value = "/likePoem", method = RequestMethod.POST)
+    @ResponseBody
+    public void likePoem( @RequestBody PoemLikeWrapper poem) throws IOException   {
+    	
+    	poemJDBCTemplate.likePoem(poem);
+    	
+    }
+    
 	
 }

@@ -8,15 +8,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import wrappers.DocDistWrapper;
+import wrappers.TopicDistWrapper;
+
 public class DocsInTopicMap {
 
 	private static final String collectionDir = "output/output_csv/DocsInTopics.csv";
 	
-	public static Map<Integer, List<Integer>> generateMap() throws FileNotFoundException {
+	public static Map<Integer, List<DocDistWrapper>> generateMap() throws FileNotFoundException {
         Scanner scanner = new Scanner(new File(collectionDir));
         scanner.useDelimiter(",");
         
-        Map<Integer, List<Integer>> map = new HashMap<Integer, List<Integer>>();
+        Map<Integer, List<DocDistWrapper>> map = new HashMap<Integer, List<DocDistWrapper>>();
         String line = "";
         List<Integer> tokens = new ArrayList<Integer>();
         
@@ -38,29 +41,42 @@ public class DocsInTopicMap {
         scanner.close();
         
         int current = 0;
-        List<Integer> list = new ArrayList<Integer>();
+        List<DocDistWrapper> list = new ArrayList<DocDistWrapper>();
         
         
         for(int i = 0; i < tokens.size(); i += 4) {
         	if (current == tokens.get(i))
-        		list.add(tokens.get(i + 3));
+        		list.add(new DocDistWrapper(tokens.get(i + 3), 0));
         	else {
         		map.put(current, list);
         		current = tokens.get(i);
-        		list = new ArrayList<Integer>();
-        		list.add(tokens.get(i + 3));
+        		list = new ArrayList<DocDistWrapper>();
+        		list.add(new DocDistWrapper(tokens.get(i + 3), 0));
         	}
         }
         map.put(current, list);
         return map;
     }
 	
-	public static Map<Integer, List<Integer>> generateMap(Map<Integer, List<TopicDistWrapper>> topicsInDocsMap) throws FileNotFoundException {
-		Map<Integer, List<Integer>> map = new HashMap<Integer, List<Integer>>();
+	public static Map<Integer, List<DocDistWrapper>> generateMap(Map<Integer, List<TopicDistWrapper>> topicsInDocsMap) throws FileNotFoundException {
+		Map<Integer, List<DocDistWrapper>> map = new HashMap<Integer, List<DocDistWrapper>>();
+		List<DocDistWrapper> current = new ArrayList<DocDistWrapper>();
 		map = generateMap();
 		
-		
-		
+		for(int docName: topicsInDocsMap.keySet()) {
+			List<TopicDistWrapper> tempList = topicsInDocsMap.get(docName);
+			for(TopicDistWrapper wrapper: tempList) {
+				current = map.get(wrapper.getTopicId());
+				for(DocDistWrapper docDistWrapper: current) {
+					if (docDistWrapper.getDocName() == docName) {
+						docDistWrapper.setDistribution(wrapper.getDistribution());
+						break;
+					}
+						
+				}
+				map.put(wrapper.getTopicId(), current);
+			}
+		}
 		return map;
 	}
 }
