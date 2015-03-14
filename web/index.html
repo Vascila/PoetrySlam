@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html ng-app="ionicApp">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title>Scripts</title>
+
+	
+	
+    <link href="http://code.ionicframework.com/nightly/css/ionic.css" rel="stylesheet">
+    <script src="http://code.ionicframework.com/nightly/js/ionic.bundle.js"></script>
+	
+	
+<!--    <link href="http://code.ionicframework.com/1.0.0-beta.1/css/ionic.css" rel="stylesheet">
+	<script src="http://code.ionicframework.com/1.0.0-beta.1/js/ionic.bundle.js"></script> 
+	<link href="css/ionic.css" rel="stylesheet">
+	<script src="js/ionic.bundle.js"></script> 
+	
+	<link href="lib/css/ionic.css" rel="stylesheet">
+	<script src="lib/js/ionic.bundle.js"></script>  -->
+	
+	<link href="css/style.css" rel="stylesheet">
+	<script src="js/app.js"></script> 
+	
+</head>
+
+<body>
+  
+    <ion-nav-bar class="bar-positive nav-title-slide-ios7" align-title="center">
+    </ion-nav-bar>
+
+    <ion-nav-view style="background: white;"
+				  class="slide-left-right">
+	</ion-nav-view>  
+  
+	
+	<script id="login.html" type="text/ng-template">
+		
+		<ion-header-bar class="bar-positive">
+			<h1 class="title">{{navTitle}}</h1>
+		</ion-header-bar>
+		
+		<ion-content has-header="true">
+			
+			<br>
+			<br>
+			<br>
+			
+            <label class="item item-input">
+              <span class="input-label">Username</span>
+              <input type="text" ng-model="username">
+            </label>			
+			
+			<a class="button button-block button-positive" 
+			   ng-click="login(username)">
+			   Sign-In
+			</a>
+		
+		</ion-content>
+			
+	</script>
+	
+	
+	<script id="home.html" type="text/ng-template">
+	
+		<ion-header-bar class="bar-positive">
+			<h1 class="title">Poetry List</h1>
+		</ion-header-bar>
+		
+		<ion-content>
+		
+		<!--
+			<div id="search-box" class="bar bar-header item-input-inset">
+				<div class="item-input-wrapper">
+					<i class="icon ion-ios7-search placeholder-icon"></i>
+					<input type="search" placeholder="Search for Poet or Title" ng-model="currentList.searchQuery">
+					<i class="clear-search icon ion-ios7-close-empty" ng-click="clearSearch()"></i>
+				</div>
+			</div>	
+		-->
+		
+			<ul class="list">
+				<li class="item" 
+								ng-repeat="poem in currentList.slice(0, currentIndex)"
+								ng-click="test()"
+								ui-sref='main.poem({poemId: poem.poemID})'>
+					<h2>{{poem.title}}</h2>
+					<p>{{poem.author}}</p>
+				</li>
+			</ul>
+			
+			<button class="button button-block button-stable" ng-click="showMore()">
+				Show More
+			</button>
+			
+		</ion-content> 
+	
+	</script>
+	
+	
+	<script id="mainContainer.html" type="text/ng-template">
+	
+		<ion-side-menus enable-menu-with-back-views="false">
+		
+			<ion-side-menu-content>
+				<ion-nav-bar class="bar-positive">
+				</ion-nav-bar>
+				<ion-nav-view name="main"></ion-nav-view>
+			</ion-side-menu-content> 
+
+			
+		
+			<ion-side-menu side="left">
+			
+				<ion-header-bar class="bar-assertive">
+					<h1 class="title">Jump To</h1>
+				</ion-header-bar>
+		
+				<ion-content>
+				
+					<a class="button button-block icon ion-home" ng-click="backToList()">Poem List</a>
+					<a class="button button-block icon ion-bookmark" ng-click="toBookmarksPage()">Saved Bookmarks</a>
+					
+				</ion-content>
+			</ion-side-menu>
+		
+		
+		<!--
+			<ion-side-menu side="right">
+			
+				<ion-header-bar class="bar-assertive">
+					<h1 class="title">Liked Poems</h1>
+				</ion-header-bar>
+			
+				<ion-content>					
+					<ion-list>
+						<div	  class="item"
+								  ng-repeat="item in likedItems">
+							<h4 ng-model="title">{{item}}</h4>
+						</div>
+					</ion-list>			
+				</ion-content>
+			
+			</ion-side-menu>
+		-->
+		
+		</ion-side-menus>
+		
+	</script>	
+	
+	<script id="poem.html" type="text/ng-template">
+	
+		<ion-view>
+		
+			<ion-nav-buttons side="left">
+				<a class="button icon ion-navicon-round" ng-click="toggleLeft()">Views</a>	
+			<!--	<a class="button icon ion-reply" ng-click="back()"></a>
+				<a class="button icon ion-forward" ng-click="forward()"></a> -->
+			</ion-nav-buttons>         	
+	
+			
+			<ion-nav-buttons side="right">
+				<a class="{{likeClass}}" style="width: 150px;"
+										 ng-click="like(poem.poemID)"></a>
+			</ion-nav-buttons> 			
+	
+			<ion-content direction="xy"
+						 scrollbar-x="false"
+						 has-bouncing="true"
+						 nav-transition="ios" 
+						 on-swipe-right="back()"
+						 on-swipe-left="forward()"
+						 has-subfooter="true" 
+						 style="margin-left: 20px;">
+				
+				<h4>By: {{poem.author}}</h4>
+				<h3 align-title="center">{{poem.title}}</h3>
+				<pre style="font-size: {{data.volume}}px;">{{poem.text}}</pre>
+				<br>
+				
+			</ion-content>
+			
+			<ion-footer-bar padding="true">
+					<button class="button button-royal" style="min-width: 50%;" ng-click="findSimilar()">Similar</button>
+					<button class="button button-energized" style="min-width: 50%;" ng-click="showPopup()">New</div>
+			</ion-footer-bar>				
+		
+		</ion-view>
+		
+	</script>
+	
+
+	
+	<script id="newListPopup.html" type="text/ng-template">
+		<ion-list>
+			<div	  class="item"
+					  ng-repeat="item in list"
+					  ng-click="openNew(item)"
+					  style="background: {{item.distrColor}}">
+				<h4 ng-model="title">{{item.title}}</h4>
+			</div>
+		</ion-list>
+	</script>	
+	
+	
+
+	<script id="bookmarks.html" type="text/ng-template">
+		<ion-header-bar class="bar-positive">
+			<h1 class="title">Bookmarks</h1>
+		</ion-header-bar>	
+	
+		<ion-content>
+			<ion-list>
+				<div	  class="item"
+						  ng-repeat="stuff in bookmarks"
+						  ng-click="wipeHistory({{stuff.poemID}})"
+						  ui-sref='main.poem({poemId: stuff.poemID})'>
+					<h2 ng-model="title">{{stuff.title}}</h2>
+					<p>{{stuff.author}}</p>
+						
+									
+				</div>
+				
+			</ion-list>
+		</ion-content>
+		
+		<ion-footer-bar padding="true">
+				<button class="button button-royal" style="min-width: 100%;"
+						ui-sref='main.poem({poemId: last})'>Back</button>
+		</ion-footer-bar>			
+	</script>		
+	
+	
+	<script id="compose.html" type="text/ng-template">
+		
+		<div class="bar bar-header bar-positive">
+			<div class="title">My Compositions</div>
+			<a class="button button-icon icon ion-ios7-plus-outline" ui-sref="newPoem">New</a>
+		</div>
+		
+		<ion-content>
+			<a class="button icon ion-home" href="#home"> Home</a>
+		</ion-content>
+
+    </script>	
+
+	
+
+	<script id="newPoem.html" type="text/ng-template">
+		<ion-view title="New Poem">
+			<div class="list" has-footer="true">
+				
+				<label class="item">
+					<input type="text" 
+						   placeholder="Author Name" 
+						   ng-model="poem.author">
+				</label>
+				
+				<label class="item">
+					<input type="text" 
+						   placeholder="Poem Title" 
+						   ng-model="poem.title">
+				</label>
+				
+				<label class="item">
+					<textarea placeholder="Poem Text"
+							  rows="100" cols="10"
+							  ng-model="poem.text">
+					</textarea>
+				</label>
+			</div>
+			
+			<div class="bar bar-footer bar-balanced">
+				  <button class="button button-full button-clear" ng-click="submitConfirm()">Submit</button>
+			</div>
+			
+		</ion-view>
+	</script>
+	
+	<!-- UNUSED MODAL
+	<script id="relevanceModal" type="text/ng-template">
+	
+		<ion-modal-view>
+			<ion-header-bar class="bar-positive">
+				<h2 class="title">Relevant Poems</h2>
+			</ion-header-bar>
+			
+			<ion-content>
+				<ion-list>
+					<ion-item ng-repeat="item in list"
+							  ng-click="modal.hide(); openNew(item)"
+							  style="background: {{item.distrColor}}">
+						<h4 ng-model="title">{{item.title}}</h4>
+					</ion-item>
+				</ion-list>
+			</ion-content>
+		
+			<ion-footer-bar class="bar-dark" ng-click="modal.hide()">
+				<h2 class="title">Back</h2>
+			</ion-footer-bar>
+		
+		</ion-modal-view>
+
+	</script>
+	-->
+
+</body>
+
+
+</html>
