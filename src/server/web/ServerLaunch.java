@@ -11,10 +11,10 @@ import org.springframework.context.annotation.ComponentScan;
 public class ServerLaunch {
 
 	/**
-	 * Main method for launching server
+	 * Main method for launching the server
 	 */
     public static void main(String[] args) {
-    	//TopicModelling.runMallet();
+    	TopicModelling.runMallet();
         SpringApplication.run(ServerLaunch.class, args);
     }
 
