@@ -1,4 +1,4 @@
-package server.mallet;
+package mallet;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -56,10 +56,6 @@ public class PipeLine {
         } 
         catch (Exception e) {}
         
-//        Writer writer = new BufferedWriter(new OutputStreamWriter(
-//                new FileOutputStream(OUTPUT_DIR), "utf-8"));
-//        writer.write(instances.getDataAlphabet().toString());
-//        writer.close();
     }
 	
 }

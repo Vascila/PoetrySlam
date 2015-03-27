@@ -1,4 +1,4 @@
-package server.mallet;
+package mallet;
 
 import java.io.*;
 import java.util.zip.*;

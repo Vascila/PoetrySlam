@@ -19,12 +19,27 @@ public class MapFunctions {
 	private Map<Integer, List<DocDistWrapper>> docsInTopicsMap;
 	private List<Double> topicsTotalDistributions;
 	
+	/**
+	 * Constructor for MapFunctions
+	 * Reads the TopicsInDocs and the DocsInTopics csv output 
+	 * files from MALLET and create and creates HashMaps based on them
+	 * 
+	 * @throws IOException
+	 */
 	public MapFunctions() throws IOException {
     	this.topicsInDocsMap = TopicsInDocsMap.generateMap();
     	this.docsInTopicsMap = DocsInTopicMap.generateMap(topicsInDocsMap);
     	this.topicsTotalDistributions = TopicsTotalDistCalculator.calculateTotalDistribution(docsInTopicsMap);
 	}
 	
+	/**
+	 * Method for retrieving a list of randomly distributed topics
+	 * based on currently viewed poem
+	 * 
+	 * @param current navigation history
+	 * @return
+	 */
+	@Deprecated
 	public List<Integer> getRandomDistTopics(List<Integer> history) {
 		int current = history.get(history.size() - 1);
 		List<Integer> rd = new ArrayList<Integer>();
@@ -50,6 +65,13 @@ public class MapFunctions {
 		return currentList;
 	}
 	
+	/**
+	 * Method for retrieving a list of randomly distributed poems
+	 * based on currently viewed poem
+	 * 
+	 * @param current navigation history
+	 * @return
+	 */
 	public List<DocDistWrapper> getRandomDistPoems(List<Integer> history) {
 		int current = history.get(history.size() - 1);
 		List<Integer> foundTopics = new ArrayList<Integer>();
@@ -76,13 +98,19 @@ public class MapFunctions {
 				foundPoem = normalizePoem(topicID, r);
 				rdPoem = foundPoem.getDocName();
 			} while (checkList(foundPoems, rdPoem) || history.contains(rdPoem));
-			System.out.println("Adding" + foundPoem.getDocName());
 			foundPoems.add(foundPoem);
 		}
-		System.out.println();
 		return foundPoems;
 	}
 	
+	/**
+	 * Method for checking whether an ID is already
+	 * within a list
+	 * 
+	 * @param list to check
+	 * @param poem ID to look for in list
+	 * @return boolean result
+	 */
 	private boolean checkList(List<DocDistWrapper> list, int poemID) {
 		for (DocDistWrapper wrapper: list) {
 			if (wrapper.getDocName() == poemID)
@@ -91,6 +119,13 @@ public class MapFunctions {
 		return false;
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param topicID
+	 * @param rnd
+	 * @return
+	 */
 	public DocDistWrapper normalizePoem(int topicID, double rnd) {
 		double count = topicsTotalDistributions.get(topicID);
 		for (DocDistWrapper poem: docsInTopicsMap.get(topicID)) {
@@ -155,16 +190,6 @@ public class MapFunctions {
     	return -1;
     }
     
-    private int getRandomDistPoem(int topicID, List<Integer> history, List<Integer> currentList) {
-    	List<DocDistWrapper> docList = docsInTopicsMap.get(topicID);
-    	for(DocDistWrapper wrapper: docList) {
-    		int id = wrapper.getDocName();
-    		if (!history.contains(id) && !currentList.contains(id)) {
-    			return id;
-    		}
-    	}
-    	return -1;
-    }
     
     
     /**

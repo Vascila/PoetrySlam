@@ -9,6 +9,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 
+/**
+ * Necessary class to allow for communication
+ * with mobile device
+ */
 @Component
 public class SimpleCORSFilter implements Filter {
 

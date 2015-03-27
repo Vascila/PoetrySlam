@@ -23,7 +23,6 @@ public class TestIvy {
 	public static void main(String[] args) throws ParseException {
 		
 		String dateP = "2012-01-01T11:22:33Z";
-		String date = "2007-07-14T19:20Z";
 		System.out.println(parseTimestamp(dateP));
 		
 	}

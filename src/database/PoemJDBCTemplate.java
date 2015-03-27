@@ -27,18 +27,14 @@ import database.util.DBUtil;
 
 public class PoemJDBCTemplate implements PoemDao {
 
-	private static final String FIX_POEM_BY_ID = "SELECT poemid " +
-			"FROM 	(SELECT poemid, " +
-					"row_number() over (partition BY lower(title) ORDER BY poemid) AS rnum " +
-					"FROM poems) t "+
-				"WHERE t.rnum > 1 "+
-				"order by poemid ";
+	// All queries used for database access
 	private static final String getAllPoems = "SELECT * FROM Poems ";
 	private static final String getPoemByID = "SELECT * FROM Poems WHERE Poems.poemid = ? ";
 	private static final String insertSql = "INSERT INTO Poems (Author, PoemText, Title, date) values (?, ?, ?, ?)";
 	private static final String insertLikeSql = "INSERT INTO TestData(userid, poemid, choseSimilar, choseNew, weight) values (?, ?, ?, ?, ?)";
-	private static final String getRecent = "SELECT * FROM poems WHERE date > ? ORDER BY date DESC";
 	private static final String getPoemsByID = "SELECT * FROM poems WHERE poemid IN (";
+	private static final String FIX_POEM_BY_ID = "SELECT poemid FROM (SELECT poemid, row_number() over "
+			+ "(partition BY lower(title) ORDER BY poemid) AS rnum FROM poems) t WHERE t.rnum > 1 order by poemid ";
 	
 	private DataSource dataSource;
 	private JdbcTemplate jdbcTemplateObject;
@@ -47,15 +43,6 @@ public class PoemJDBCTemplate implements PoemDao {
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
-	}
-
-	@Override
-	public List<Poem> getNewestPoems() {
-		Date asd = new Date(2015, 1, 1);
-		Object[] args = {new Timestamp(asd.getTime())};
-		List<Poem> poems = jdbcTemplateObject.query(getRecent, args, new PoemMapper());
-		System.out.println(poems.size());
-		return poems;
 	}
 	
 	@Override
@@ -97,7 +84,7 @@ public class PoemJDBCTemplate implements PoemDao {
 		
 		String sql = FIX_POEM_BY_ID;
 		List<Integer> ids = jdbcTemplateObject.queryForList(sql, Integer.class);
-		
+			
 		  String sourceFileName = "C:\\Users\\Lukas\\git\\PoetrySlam\\OtherText\\testLine.txt";
 		  String destinationFileName = "C:\\Users\\Lukas\\git\\PoetrySlam\\OtherText\\testLineFixed.txt";
 		
@@ -146,7 +133,6 @@ public class PoemJDBCTemplate implements PoemDao {
 					if (half == 0 && dup) {
 						p.setTitle(halfString(p.getTitle()));
 						newPoems.add(p);
-						//System.out.println(p.getTitle() + "\t\t\t" + halfString(p.getTitle()));
 					}
 				}
 				dup = true;
@@ -158,7 +144,6 @@ public class PoemJDBCTemplate implements PoemDao {
 		        PreparedStatement statement = connection.prepareStatement(updateSql);
 		    ) {
 			for (Poem p: newPoems) {
-				//System.out.println(p.getPoemID() + "\t" + p.getTitle());
 				statement.setString(1, p.getTitle());
 				statement.setInt(2, p.getPoemID());
 				statement.executeUpdate();
@@ -203,27 +188,6 @@ public class PoemJDBCTemplate implements PoemDao {
 			}
 		}
 		
-	}
-	
-	@Override
-	public void checkDuplicateTitle() {
-		List<Poem> poems = jdbcTemplateObject.query(getAllPoems, new PoemMapper());
-		boolean dup = true;
-		for (Poem p: poems) {
-			String[] tokens = p.getTitle().split(" ");
-			if (tokens.length % 2 == 0) {
-				int half = tokens.length / 2;
-				
-				while (dup && half != 0) {
-					if (!tokens[half-1].equals(tokens[half*2-1]))
-						dup = false;
-					half--;
-					if (half == 0 && dup)
-						System.out.println(p.getTitle());
-				}
-				dup = true;
-			}
-		}
 	}
 	
     private Poem fixAtuthorName1(Poem poem) {

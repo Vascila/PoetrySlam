@@ -1,5 +1,9 @@
 package wrappers;
 
+/**
+ *	Wrapper holding a poem ID and its current distribution 
+ *
+ */
 public class DocDistWrapper {
 
 	private int docName;

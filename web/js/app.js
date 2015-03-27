@@ -37,7 +37,7 @@ angular.module('ionicApp', ['ionic'])
 
 	var poemList = []; 
 	
-	var res = $http.post('http://192.168.0.3:8080/getAllPoems');
+	var res = $http.post('http://192.168.43.189:8080/getAllPoems');
 	res.success(function(data, PoemListService) {
 		data = shuffle(data);
 		for(var i = 0; i < data.length; i++) {		
@@ -70,7 +70,7 @@ angular.module('ionicApp', ['ionic'])
 	},
 	getPoemByID: function(poemId) {
 			var dfd = $q.defer();
-			var res = $http.post('http://192.168.0.3:8080/getPoemByID', poemId);
+			var res = $http.post('http://192.168.43.189:8080/getPoemByID', poemId);
 			res.success(function(poem) {
 				dfd.resolve(poem);
 				console.log("getting poem on id: " + poem.poem);
@@ -219,7 +219,7 @@ angular.module('ionicApp', ['ionic'])
 		};
 		
 		// Posting to server
-		var res = $http.post('http://192.168.0.3:8080/savePoem_json', poem);
+		var res = $http.post('http://192.168.43.189:8080/savePoem_json', poem);
 		res.success(function(data, status, headers, config) {
 			$scope.message = data;
 		});
@@ -287,7 +287,7 @@ angular.module('ionicApp', ['ionic'])
 	
 	$scope.findSimilar = function() {
 		choiceStatus = 0;
-		var res = $http.post('http://192.168.0.3:8080/findSimilar', savedHistory.concat(forwardHistory));
+		var res = $http.post('http://192.168.43.189:8080/findSimilar', savedHistory.concat(forwardHistory));
 		res.success(function(data) {
 			savedHistory.push(data.poemID);
 			changeScope(data);
@@ -306,7 +306,7 @@ angular.module('ionicApp', ['ionic'])
 			getNewList();
 			savedHistory.push(forwardHistory.pop());
 			scrollTop();
-			var res = $http.post('http://192.168.0.3:8080/getPoemByID', savedHistory[savedHistory.length-1]);
+			var res = $http.post('http://192.168.43.189:8080/getPoemByID', savedHistory[savedHistory.length-1]);
 			res.success(function(data) {
 				changeScope(data);
 			});
@@ -321,7 +321,7 @@ angular.module('ionicApp', ['ionic'])
 			getNewList();
 			forwardHistory.push(savedHistory.pop());
 			scrollTop();
-			var res = $http.post('http://192.168.0.3:8080/getPoemByID', savedHistory[savedHistory.length-1]);
+			var res = $http.post('http://192.168.43.189:8080/getPoemByID', savedHistory[savedHistory.length-1]);
 			res.success(function(data) {
 				changeScope(data)
 			});
@@ -336,21 +336,22 @@ angular.module('ionicApp', ['ionic'])
 		choiceStatus = 1;
 		savedPopup.close();
 		scrollTop();
-		poem = item;
 		changeScope(item);
 		getNewList();
 		forwardHistory = [];
 	};
 	
 	changeScope = function(item) {
+		console.log("Author: " + item.author);
 		changeStar(item.poemID);
 		$scope.poem = item;
+		poem = item;
 	};
 
 
 	mulligan = function() {
 		//$scope.closePopup();
-		var res = $http.post('http://192.168.0.3:8080/getRandDistPoems', savedHistory.concat(forwardHistory));
+		var res = $http.post('http://192.168.43.189:8080/getRandDistPoems', savedHistory.concat(forwardHistory));
 		temp = [];
 		res.success(function(data) {
 			for(var i = 0; i < data.length; i++) {
@@ -380,7 +381,7 @@ angular.module('ionicApp', ['ionic'])
 	getNewList = function() {
 		var tempHistory = savedHistory;
 		tempHistory.push(poem.poemID);
-		var res = $http.post('http://192.168.0.3:8080/getRandDistPoems', tempHistory);
+		var res = $http.post('http://192.168.43.189:8080/getRandDistPoems', tempHistory);
 		$scope.list = [];
 		
 		if (tempHistory.length > 1)
@@ -419,7 +420,7 @@ angular.module('ionicApp', ['ionic'])
 			
 			var likedPoem = {userId: userID, poemId: poem.poemID, weight: poem.distribution, afterSimilar: choiceStatus};
 			
-			var res = $http.post('http://192.168.0.3:8080/likePoem', likedPoem);
+			var res = $http.post('http://192.168.43.189:8080/likePoem', likedPoem);
 			res.success(function(data) {
 				console.log("Poem Liked: " + id);
 			});	

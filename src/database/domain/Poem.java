@@ -1,6 +1,9 @@
 package database.domain;
 
-
+/**
+ *	Poem domain class 
+ *
+ */
 public class Poem {
 
 	private Integer poemID;

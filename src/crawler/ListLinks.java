@@ -1,12 +1,15 @@
 package crawler;
 
 
+
+
 /**
  * Example program to list links from a URL.
  */
 public class ListLinks {
 	/*
 	private static final String TEMP_URL = "http://www.bartleby.com/106/181.html";
+	
 	
     public static void main(String[] args) throws IOException {
         String url = TEMP_URL;
@@ -37,6 +40,7 @@ public class ListLinks {
             print(" * a: <%s>  (%s)", link.attr("abs:href"), trim(link.text(), 35));
         }
     }
+    
 
     private static void print(String msg, Object... args) {
         System.out.println(String.format(msg, args));
@@ -49,4 +53,5 @@ public class ListLinks {
             return s;
     }
     */
+    
 }

@@ -1,5 +1,7 @@
 package server.web;
 
+import mallet.TopicModelling;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
@@ -8,7 +10,11 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableAutoConfiguration
 public class ServerLaunch {
 
+	/**
+	 * Main method for launching server
+	 */
     public static void main(String[] args) {
+    	//TopicModelling.runMallet();
         SpringApplication.run(ServerLaunch.class, args);
     }
 

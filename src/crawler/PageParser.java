@@ -3,7 +3,6 @@ package crawler;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -13,6 +12,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import mallet.PipeLine;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,14 +22,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import server.mallet.PipeLine;
 import database.PoemJDBCTemplate;
 import database.domain.Poem;
 
 
+@SuppressWarnings("resource")
 public class PageParser implements InitializingBean, Runnable {
 	
-	private static final String TEMP_URL = "http://www.bartleby.com/101/118.html";
 	private static final String collectionDir = "OtherText/urls1.txt";
 
 	public void afterPropertiesSet() throws Exception {
@@ -49,9 +49,9 @@ public class PageParser implements InitializingBean, Runnable {
 	}
 	
     public static void main(String[] args) throws IOException, SQLException {
-    	//(new Thread(new PageParser())).start();
+    	(new Thread(new PageParser())).start();
     	//updateAuthorNames();
-    	removeBrokenPoems();
+    	//removeBrokenPoems();
     }
 
     
@@ -82,12 +82,9 @@ public class PageParser implements InitializingBean, Runnable {
 		        tempPoem.setAuthor(fixAuthorName(authorName));
 		        tempPoem.setTitle(poemTitle);
 		        
-	//	        System.out.println(fixAuthorName(authorName));
-	//	        System.out.println(poemTitle);
 		        
 		        for(Element e: poem) {
 		        	poemLine += fixHtmlTags(e.select("td").get(0).text()) + "\n";
-		    		//System.out.println(poemLine);
 		        }	
 		        tempPoem.setText(poemLine);
 		        parsedPoems.add(tempPoem);
@@ -145,7 +142,7 @@ public class PageParser implements InitializingBean, Runnable {
     
     public static void updateAuthorNames() throws SQLException {
     	
-    	ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+		ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
     	PoemJDBCTemplate poemJDBCTemplate = (PoemJDBCTemplate) context.getBean("poemJDBCTemplate");
     	
     	poemJDBCTemplate.updateAuthorNames();
@@ -181,16 +178,14 @@ public class PageParser implements InitializingBean, Runnable {
     }
 
     private String fixAuthorName(String name) {
+    	String temp = "";
     	if (name.endsWith("."))
     		return name.substring(0, name.length() - 1);
-    	return name;
-    }
-    
-    private String fixAtuthorName1(String name) {
-    	String temp = "";
-    	if (name.startsWith("By "))
+    	else if (name.startsWith("By ")) {
     		temp = name.substring(3, name.length());
-    	return temp.substring(0, temp.indexOf('('));
+    		return temp.substring(0, temp.indexOf('('));
+    	}
+    	return name;
     }
     
 }
