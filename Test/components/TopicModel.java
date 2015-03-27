@@ -62,7 +62,6 @@ public class TopicModel {
             out.format("%s-%d ", dataAlphabet.lookupObject(tokens.getIndexAtPosition(position)), topics.getIndexAtPosition(position));
         }
         writer.write(out.toString() + "\r\n");
-        System.out.println(out);
         
         // Estimate the topic distribution of the first instance, 
         //  given the current Gibbs state.

@@ -26,18 +26,16 @@ function cmykToRGB(c,m,y,k) {
 var userID;
 var savedPopup;
 var savedHistory = [];
-var forwardHistory = [];
 var savedBookmarks = [];
 var savedLikedItems = [];
 
 angular.module('ionicApp', ['ionic'])
 
-
 .factory('PoemListService', function($q, $http) {
 
 	var poemList = []; 
 	
-	var res = $http.post('http://192.168.43.189:8080/getAllPoems');
+	var res = $http.get('http://localhost:8080/getAllPoems');
 	res.success(function(data, PoemListService) {
 		data = shuffle(data);
 		for(var i = 0; i < data.length; i++) {		
@@ -70,7 +68,7 @@ angular.module('ionicApp', ['ionic'])
 	},
 	getPoemByID: function(poemId) {
 			var dfd = $q.defer();
-			var res = $http.post('http://192.168.43.189:8080/getPoemByID', poemId);
+			var res = $http.post('http://localhost:8080/getPoemByID', poemId);
 			res.success(function(poem) {
 				dfd.resolve(poem);
 				console.log("getting poem on id: " + poem.poem);
@@ -78,7 +76,6 @@ angular.module('ionicApp', ['ionic'])
 			res.error(function(data, status, headers, config) {
 				alert( "failure while retrieving poem: " + JSON.stringify({data: data}));
 			});
-			//console.log("Returnin: \n" + JSON.stringify({data: dfd.promise}));
 			return dfd.promise
 	}
   }
@@ -126,17 +123,6 @@ angular.module('ionicApp', ['ionic'])
 			}
 		})
 		
-		.state('compose', {
-			url: '/compose',
-			templateUrl: 'compose.html'
-		})
-		
-		.state('newPoem', {
-			url: '/newPoem',
-			templateUrl: 'newPoem.html',
-			controller: 'NewPoemCtrl'
-		})
-		
 		.state('bookmarks', {
 			url: '/bookmarks',
 			templateUrl: 'bookmarks.html',
@@ -157,22 +143,31 @@ angular.module('ionicApp', ['ionic'])
 })
 
 
-.controller('BookmarksCtrl', function($scope) {
+.controller('BookmarksCtrl', function($scope, $state, $ionicHistory) {
 	$scope.last = savedHistory[savedHistory.length - 1];
 	$scope.bookmarks = savedBookmarks;
 	
+	$scope.goToPoem = function(item) {
+		$ionicHistory.clearCache();
+		savedHistory = [item];
+		console.log("PASSING ARGUMENT: " + item);
+		$state.go('main.poem', {poemId: item});
+	};
+	
+	$scope.backToLastPoem = function() {
+		$ionicHistory.goBack();
+	};
+	
 	$scope.wipeHistory = function(poemID) {
-		forwardHistory = [];
 		savedHistory = [poemID];
 	};
 	
 })
 
 
-.controller('MainController', function($scope, $state, $ionicSideMenuDelegate) {
+.controller('MainController', function($scope, $state, $ionicSideMenuDelegate, $ionicHistory) {
 	
 	$scope.backToList = function() {
-		forwardHistory = [];
 		savedHistory = [];
 		toggleLeft();
 		$state.go('home');
@@ -190,159 +185,88 @@ angular.module('ionicApp', ['ionic'])
 	};
 })
 
-/*
-('NewPoemCtrl', function($scope, $ionicPopup, $http) {
-	
-	$scope.submitConfirm = function() {
-		var confirmPopup = $ionicPopup.confirm({
-			title: 'Are you sure you want to submit this poem?',
-			template: 'test template'
-		});
-		confirmPopup.then(function(res) {
-			if(res) {
-				console.log('You are sure');
-				submitPoem();
-			} else {
-				console.log('You are not sure');
-			}
-		});
-	};
-		
-		
-	submitPoem = function() {	
-		
-		// JSON of poem
-		var poem = {
-			author: $scope.poem.author,
-			title: $scope.poem.title,
-			text: $scope.poem.text
-		};
-		
-		// Posting to server
-		var res = $http.post('http://192.168.43.189:8080/savePoem_json', poem);
-		res.success(function(data, status, headers, config) {
-			$scope.message = data;
-		});
-		res.error(function(data, status, headers, config) {
-			alert( "failure message: " + JSON.stringify({data: data}));
-		});		
-		
-		//Making the fields empty
-		$scope.poem.author='';
-		$scope.poem.title='';
-		$scope.poem.text='';
-		
-	};
-})
-*/
 
-.controller('PoemViewController', function($scope, poem, $http, $state, $ionicPopup, $ionicScrollDelegate, $filter, $ionicSideMenuDelegate) {
+.controller('PoemViewController', function($ionicSlideBoxDelegate, $scope, poem, $http, $ionicPopup, $ionicScrollDelegate, $filter, $ionicSideMenuDelegate) {
 	
-	
-	console.log("ENTERING VIEW ON POEM: " + poem.poemID);
-	
+	$scope.poemSlides = {
+		numViewableSlides : 0,
+		slideIndex : 0,
+		slides : []
+	};		
+
+	$scope.poemSlides.slides.push(poem);	
 	$scope.poem = poem;
 	$scope.list = [];
 	$scope.likeClass = 'button button-stable icon ion-bookmark';
 	$scope.likedItems = savedLikedItems;
+	$scope.currentActiveSlide = 0;
 	$ionicSideMenuDelegate.canDragContent(false);
 	
 	var orderBy = $filter('orderBy');
 	var choiceStatus = -1;
 	
-	$scope.toHomePage = function() {
-		$state.go('home');
-	};	
-	
 	$scope.toggleLeft = function() {
 		$ionicSideMenuDelegate.toggleLeft();
 	};	
 	
- $scope.showPopup = function() {
-   $scope.data = {}
-
-   // An elaborate, custom popup
-    savedPopup = $ionicPopup.show({
-     templateUrl: 'newListPopup.html',
-     title: 'Related Poems',
-     scope: $scope,
-     buttons: [
-       { text: 'Back' },
-       {
-         text: '<b>Shuffle</b>',
-         type: 'button-positive',
-         onTap: function(e) {
-					e.preventDefault();
-					mulligan();
-				}
-       }
-     ]
-   });
-  };
-  
-  
-  $scope.closePopup = function() {
-    savedPopup.close()
-  }
+	nextSlide = function() {
+		$ionicSlideBoxDelegate.next();
+	};
+	
+	countSlides = function() {
+		$scope.poemSlides.numViewableSlides = 0;
+		angular.forEach($scope.poemSlides.slides, function() {
+			$scope.poemSlides.numViewableSlides++;
+		})
+	};		
+	
+	$scope.slideChanged = function(index) {
+		console.log("Index Now: " + index);
+		
+		if (index == $scope.poemSlides.slides.length) {
+			$ionicSlideBoxDelegate.previous();
+		}
+		
+		else {
+			changeScope($scope.poemSlides.slides[index]);
+			$scope.poemSlides.slideIndex = index - 1;
+			$scope.currentActiveSlide = index;
+			scrollTop();
+		}
+	
+	};	
 	
 	$scope.findSimilar = function() {
 		choiceStatus = 0;
-		var res = $http.post('http://192.168.43.189:8080/findSimilar', savedHistory.concat(forwardHistory));
+		var res = $http.post('http://localhost:8080/findSimilar', savedHistory);
 		res.success(function(data) {
 			savedHistory.push(data.poemID);
-			changeScope(data);
-			poem = data;
+			updateSlideBox(data);
 		});
-		scrollTop();
 		res.error(function(data, status, headers, config) {
 			alert( "failure message: " + JSON.stringify({data: data}));
-		});	
-		forwardHistory = [];
+		});
 	};
 	
-	
-	$scope.forward = function() {
-		if(forwardHistory.length != 0) {
-			getNewList();
-			savedHistory.push(forwardHistory.pop());
-			scrollTop();
-			var res = $http.post('http://192.168.43.189:8080/getPoemByID', savedHistory[savedHistory.length-1]);
-			res.success(function(data) {
-				changeScope(data);
-			});
-			res.error(function(data, status, headers, config) {
-				alert( "failure while going forward: " + JSON.stringify({data: data}));
-			});
-		}
-	};
-	
-	$scope.back = function() {
-		if (savedHistory.length > 1) {
-			getNewList();
-			forwardHistory.push(savedHistory.pop());
-			scrollTop();
-			var res = $http.post('http://192.168.43.189:8080/getPoemByID', savedHistory[savedHistory.length-1]);
-			res.success(function(data) {
-				changeScope(data)
-			});
-			res.error(function(data, status, headers, config) {
-				alert( "failure while going back: " + JSON.stringify({data: data}));
-			});	
-		}
-	};
+	updateSlideBox = function(data) {
+		console.log("SLIDE INDEX IS: " + $scope.poemSlides.slideIndex);
+		$scope.poemSlides.slides = $scope.poemSlides.slides.slice(0, $scope.currentActiveSlide + 1);
+		$scope.poemSlides.slides.push(data); 
+		countSlides();
+		$ionicSlideBoxDelegate.update();
+		$scope.currentActiveSlide = $scope.poemSlides.slides.length - 1;
+		$ionicSlideBoxDelegate.next();
+		scrollTop();
+	}
 	
 	$scope.openNew = function(item) {
 		savedHistory.push(item.poemID);
 		choiceStatus = 1;
 		savedPopup.close();
-		scrollTop();
-		changeScope(item);
-		getNewList();
-		forwardHistory = [];
+		updateSlideBox(item);
 	};
 	
 	changeScope = function(item) {
-		console.log("Author: " + item.author);
 		changeStar(item.poemID);
 		$scope.poem = item;
 		poem = item;
@@ -351,11 +275,10 @@ angular.module('ionicApp', ['ionic'])
 
 	mulligan = function() {
 		//$scope.closePopup();
-		var res = $http.post('http://192.168.43.189:8080/getRandDistPoems', savedHistory.concat(forwardHistory));
+		var res = $http.post('http://localhost:8080/getRandDistPoems', savedHistory);
 		temp = [];
 		res.success(function(data) {
 			for(var i = 0; i < data.length; i++) {
-//				var color = (data[i].distribution > 0.25) ? 1 : 1 * data[i].distribution / 0.25;
 				var color = (data[i].distribution > 0.3) ? 1 : data[i].distribution<0.05?0: (data[i].distribution-0.05) / 0.25;
 				temp.push({
 					poemID: data[i].poemID,
@@ -373,7 +296,6 @@ angular.module('ionicApp', ['ionic'])
 		res.error(function(data, status, headers, config) {
 			alert( "failure while running mulligan: " + JSON.stringify({data: data}));
 		});	
-		//$scope.showPopup();
 	};
 
 	
@@ -381,7 +303,7 @@ angular.module('ionicApp', ['ionic'])
 	getNewList = function() {
 		var tempHistory = savedHistory;
 		tempHistory.push(poem.poemID);
-		var res = $http.post('http://192.168.43.189:8080/getRandDistPoems', tempHistory);
+		var res = $http.post('http://localhost:8080/getRandDistPoems', tempHistory);
 		$scope.list = [];
 		
 		if (tempHistory.length > 1)
@@ -389,7 +311,6 @@ angular.module('ionicApp', ['ionic'])
 		
 		res.success(function(data) {
 			for(var i = 0; i < data.length; i++) {
-//				var color = (data[i].distribution > 0.25) ? 1 : 1 * data[i].distribution / 0.25;
 				var color = (data[i].distribution > 0.3) ? 1 : data[i].distribution<0.05?0: (data[i].distribution-0.05) / 0.25;
 				$scope.list.push({
 					poemID: data[i].poemID,
@@ -409,6 +330,7 @@ angular.module('ionicApp', ['ionic'])
 	};
 
 	$scope.like = function(id) {
+		console.log("LIKING: " + id);
 		if (checkLiked(id) == -1) {
 			
 			changeStarToLiked();
@@ -417,10 +339,9 @@ angular.module('ionicApp', ['ionic'])
 			savedLikedItems.push(id);
 			$scope.likedItems.push(id);
 			
-			
 			var likedPoem = {userId: userID, poemId: poem.poemID, weight: poem.distribution, afterSimilar: choiceStatus};
 			
-			var res = $http.post('http://192.168.43.189:8080/likePoem', likedPoem);
+			var res = $http.post('http://localhost:8080/likePoem', likedPoem);
 			res.success(function(data) {
 				console.log("Poem Liked: " + id);
 			});	
@@ -428,7 +349,34 @@ angular.module('ionicApp', ['ionic'])
 				alert( "failure while liking poem: " + JSON.stringify({data: data}));
 			});	
 		};
-	}
+	};
+	
+	
+	$scope.showPopup = function() {
+		getNewList();
+		$scope.data = {}
+		savedPopup = $ionicPopup.show({
+			templateUrl: 'newListPopup.html',
+			title: 'Related Poems',
+			scope: $scope,
+			buttons: [
+				{ text: 'Back' },
+				{
+					text: '<b>Shuffle</b>',
+					type: 'button-positive',
+					onTap: function(e) 
+						{
+							e.preventDefault();
+							mulligan();
+						}
+				}
+			]
+		});
+	};
+  
+	$scope.closePopup = function() {
+		savedPopup.close();
+	};	
 	
 	changeStar = function(id) {
 		if (checkLiked(id) == -1) {
@@ -436,7 +384,7 @@ angular.module('ionicApp', ['ionic'])
 		} else {
 			changeStarToLiked();
 		}
-	}
+	};
 	
 	checkLiked = function(id) {
 		return savedLikedItems.indexOf(id);
@@ -451,26 +399,24 @@ angular.module('ionicApp', ['ionic'])
 	};
 	
 	scrollTop = function() {
-		$ionicScrollDelegate.scrollTop();
+		$ionicScrollDelegate.scrollTop(true);
 	};
 
+	countSlides();
 	changeStar(poem.poemID);
 	getNewList();
 })
 
-.controller('HomeController', function($scope, $state, poemList) {
+.controller('HomeController', function($scope, $state, poemList, $ionicHistory) {
+	
 	$scope.currentIndex = 50;
-	
-	
-	/*
-	$scope.leftButtons = [{
-		type: 'button-icon icon ion-navicon',
-		tap: function(e) {
-			$scope.toggleMenu();
-		}
-	}];
-	*/
 	$scope.currentList = poemList;
+	
+	$scope.goToPoem = function(item) {
+		$ionicHistory.clearCache();
+		savedHistory = [item];
+		$state.go('main.poem', {poemId: item});
+	};
 	
 	$scope.showMore = function() {
 		$scope.currentIndex += 50;
@@ -478,18 +424,6 @@ angular.module('ionicApp', ['ionic'])
 			$scope.currentIndex = poemList.length;
 		$scope.$broadcast('scroll.infiniteScrollComplete');
 	};
-	
-	/*
-	$scope.showMore = function() {
-		for (var i = $scope.currentList.length; (i < currentIndex && i < poemList.length); i++) {
-			console.log(i);
-			$scope.currentList.push(poemList[i]);
-		}
-		currentIndex += 10;
-	};
-	
-	$scope.showMore();
-	*/
 });
 
 

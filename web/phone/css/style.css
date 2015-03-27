@@ -1,0 +1,29 @@
+.no-tabs { top: 0; }
+.has-footer.has-tabs {
+  bottom: 93px;
+}
+.sub-footer{
+bottom:50px !important;
+}
+
+.mybutton {
+width: 50%;
+text-align: center;
+padding-top: 6px;
+background: #ff0;
+}
+
+
+.modal-backdrop {
+position: fixed;
+top: 30%;
+left: 25%;
+z-index: 140;
+width: 50%;
+height: 50%;
+}
+
+.popup-body {
+padding: 10px;
+overflow: hidden;
+}
